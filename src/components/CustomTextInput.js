@@ -14,6 +14,7 @@ const CustomTextInput = ({
     placeholder,
     style,
     isPassword,
+    keyboardType
 }) => {
     const [secure, setSecure] = useState(isPassword ? true : false);
     const showPassword = () => setSecure((oldValue) => !oldValue);
@@ -35,6 +36,7 @@ const CustomTextInput = ({
                     value,
                     editable,
                     placeholder,
+                    keyboardType
                 }}
             />
             {isPassword ? (

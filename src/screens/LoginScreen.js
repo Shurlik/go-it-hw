@@ -5,49 +5,49 @@ import {
     Platform,
     TouchableWithoutFeedback,
     Keyboard,
-    ScrollView,
 } from "react-native";
 import React, { useState } from "react";
 
 import Colors from "../assets/Colors";
 import TitleText from "../components/typography/TitleText";
 import CustomTextInput from "../components/CustomTextInput";
-import UserPhoto from "../components/UserPhoto";
 import CustomButton from "../components/CustomButton";
 import CustomText from "../components/typography/CustomText";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const LoginScreen = () => {
     const [activeInputName, setActiveInputName] = useState("");
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
 
     const { bottom: bHeight } = useSafeAreaInsets();
 
     const registerHandler = () => {
-        console.log("register");
+        console.log("will go to register in future");
     };
     const loginHandler = () => {
-        console.log("enter");
+        console.log("\nemail: ", email, "\npass: ", password);
     };
 
     return (
-        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-            <>
+        <>
+            <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
                 <KeyboardAvoidingView
                     behavior={Platform.OS == "ios" ? "padding" : "height"}
                     style={styles.wrapper}
-                    keyboardVerticalOffset={-200}
+                    keyboardVerticalOffset={-150}
                 >
-                    <View
-                        style={[
-                            styles.container,
-                            // { paddingBottom: 50 + bHeight },
-                        ]}
-                    >
+                    <View style={[styles.container]}>
                         <TitleText text={"Войти"} titleType={"h1"} />
                         <View style={styles.inputs}>
                             <CustomTextInput
+                                keyboardType={"email-address"}
+                                onChangeText={(text) => {
+                                    setEmail(text);
+                                }}
                                 placeholder={"Адрес электронной почты"}
                                 isActive={activeInputName === "email"}
+                                value={email}
                                 onBlur={() => {
                                     setActiveInputName("");
                                 }}
@@ -56,6 +56,10 @@ const LoginScreen = () => {
                                 }}
                             />
                             <CustomTextInput
+                                onChangeText={(text) => {
+                                    setPassword(text);
+                                }}
+                                value={password}
                                 placeholder={"Пароль"}
                                 isPassword
                                 isActive={activeInputName === "password"}
@@ -70,21 +74,21 @@ const LoginScreen = () => {
                         <View style={styles.buttons}>
                             <CustomButton
                                 title={"Войти"}
-                                onPress={registerHandler}
+                                onPress={loginHandler}
                             />
                             <CustomText
                                 secondary
                                 style={styles.login}
-                                onPress={loginHandler}
+                                onPress={registerHandler}
                             >
                                 {"Нет аккаунта? Зарегистрироваться"}
                             </CustomText>
                         </View>
                     </View>
                 </KeyboardAvoidingView>
-                <View style={[styles.bottom, { paddingBottom: bHeight }]} />
-            </>
-        </TouchableWithoutFeedback>
+            </TouchableWithoutFeedback>
+            <View style={[styles.bottom, { paddingBottom: bHeight }]} />
+        </>
     );
 };
 

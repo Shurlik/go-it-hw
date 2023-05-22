@@ -12,8 +12,8 @@ export default function App() {
                 source={require("./src/assets/bg.png")}
                 resizeMethod="resize"
             >
-                {/* <RegistrationScreen /> */}
-                <LoginScreen />
+                <RegistrationScreen />
+                {/* <LoginScreen /> */}
             </ImageBackground>
             <StatusBar style="auto" />
         </SafeAreaProvider>

@@ -19,11 +19,21 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const RegistrationScreen = () => {
     const [activeInputName, setActiveInputName] = useState("");
+    const [login, setLogin] = useState("");
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
 
     const { bottom: bHeight } = useSafeAreaInsets();
 
     const registerHandler = () => {
-        console.log("register");
+        console.log(
+            "\nlogin: ",
+            login,
+            "\nemail: ",
+            email,
+            "\npass: ",
+            password
+        );
     };
     const loginHandler = () => {
         console.log("enter");
@@ -49,6 +59,9 @@ const RegistrationScreen = () => {
                         <TitleText text={"Регистрация"} titleType={"h1"} />
                         <View style={styles.inputs}>
                             <CustomTextInput
+                                onChangeText={(text) => {
+                                    setLogin(text);
+                                }}
                                 placeholder={"Логин"}
                                 isActive={activeInputName === "login"}
                                 onBlur={() => {
@@ -59,6 +72,10 @@ const RegistrationScreen = () => {
                                 }}
                             />
                             <CustomTextInput
+                                keyboardType={"email-address"}
+                                onChangeText={(text) => {
+                                    setEmail(text);
+                                }}
                                 placeholder={"Адрес электронной почты"}
                                 isActive={activeInputName === "email"}
                                 onBlur={() => {
@@ -69,6 +86,9 @@ const RegistrationScreen = () => {
                                 }}
                             />
                             <CustomTextInput
+                                onChangeText={(text) => {
+                                    setPassword(text);
+                                }}
                                 placeholder={"Пароль"}
                                 isPassword
                                 isActive={activeInputName === "password"}
