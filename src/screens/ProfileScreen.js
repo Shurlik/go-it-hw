@@ -2,14 +2,14 @@ import React from "react";
 import { View, Text, StyleSheet } from "react-native";
 import Colors from "../assets/Colors";
 
-const PostsScreen = () => {
+const ProfileScreen = () => {
   return (
     <View style={styles.container}>
-      <Text>PostsScreen Screen</Text>
+      <Text>ProfileScreen Screen</Text>
     </View>
   );
 };
-export default PostsScreen;
+export default ProfileScreen;
 
 const styles = StyleSheet.create({
   container: {

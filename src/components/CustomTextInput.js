@@ -45,7 +45,7 @@ const CustomTextInput = ({
                     onPress={showPassword}
                     style={styles.text}
                 >
-                    {secure ? "Показать" : "Скрыть"}
+                    {secure ? "Показати" : "Сховати"}
                 </CustomText>
             ) : null}
         </View>
