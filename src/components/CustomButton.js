@@ -1,24 +1,25 @@
-import { Pressable, StyleSheet } from "react-native";
+import { StyleSheet } from "react-native";
 import React from "react";
 
 import Colors from "../assets/Colors";
 import CustomText from "./typography/CustomText";
+import PressButton from "./PressButton";
 
-const CustomButton = ({ title, onPress, secondary, style }) => {
+const CustomButton = ({ title, onPress, secondary, style, disabled }) => {
   return (
-    <Pressable
-      style={({ pressed }) => [
+    <PressButton
+      style={[
         styles.container,
         secondary && styles.secondary,
-        styles && styles,
-        pressed && styles.pressed,
+        style && style,
+        disabled && styles.disabled,
       ]}
-      {...{ onPress }}
+      {...{ onPress, disabled }}
     >
       <CustomText style={[styles.title, secondary && styles.titleSecondary]}>
         {title}
       </CustomText>
-    </Pressable>
+    </PressButton>
   );
 };
 
@@ -42,7 +43,8 @@ const styles = StyleSheet.create({
   titleSecondary: {
     color: Colors.textSecondary,
   },
-  pressed: {
-    opacity: 0.5,
+  disabled: {
+    backgroundColor: Colors.darkGrey,
+    color: Colors.grey,
   },
 });

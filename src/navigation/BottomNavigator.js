@@ -8,14 +8,20 @@ import ProfileScreen from "../screens/ProfileScreen";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { AntDesign, Feather, Ionicons } from "@expo/vector-icons";
 import Colors from "../assets/Colors";
-import { View, StyleSheet, Pressable } from "react-native";
+import { View, StyleSheet } from "react-native";
+import PressButton from "../components/PressButton";
+import { useNavigation } from "@react-navigation/native";
 
 const BottomNavigator = () => {
   const TabsNavigator = createBottomTabNavigator();
+  const navigation = useNavigation();
   const { top: tHeight } = useSafeAreaInsets();
-  const exitHandler = () => {};
+  const exitHandler = () => {
+    navigation.navigate("start", { screen: "login" });
+  };
 
   const screenOptions = {
+    tabBarHideOnKeyboard: true,
     tabBarActiveTintColor: Colors.white,
     tabBarInactiveTintColor: Colors.darkGrey,
     tabBarShowLabel: false,
@@ -44,12 +50,8 @@ const BottomNavigator = () => {
           title: "Публікації",
           headerRight: () => {
             return (
-              <Pressable
-                style={({ pressed }) => [
-                  styles.exit,
-                  { paddingTop: tHeight },
-                  pressed && styles.pressed,
-                ]}
+              <PressButton
+                style={[styles.exit, { paddingTop: tHeight }]}
                 onPress={exitHandler}
               >
                 <Ionicons
@@ -57,7 +59,7 @@ const BottomNavigator = () => {
                   size={32}
                   color={Colors.darkGrey}
                 />
-              </Pressable>
+              </PressButton>
             );
           },
           tabBarIcon: ({ color, focused }) => (
@@ -81,6 +83,7 @@ const BottomNavigator = () => {
               <AntDesign name="plus" size={20} color={color} />
             </View>
           ),
+          unmountOnBlur: true,
         }}
       />
       <TabsNavigator.Screen
@@ -114,9 +117,6 @@ const styles = StyleSheet.create({
   },
   inactive: {
     backgroundColor: Colors.transparent,
-  },
-  pressed: {
-    opacity: 0.5,
   },
   exit: {
     marginRight: 20,

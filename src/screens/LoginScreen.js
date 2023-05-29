@@ -36,7 +36,7 @@ const LoginScreen = () => {
     <>
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <KeyboardAvoidingView
-          behavior={Platform.OS == "ios" ? "padding" : "height"}
+          behavior={Platform.OS === "ios" ? "padding" : "height"}
           style={styles.wrapper}
           keyboardVerticalOffset={-150}
         >
@@ -45,10 +45,10 @@ const LoginScreen = () => {
             <View style={styles.inputs}>
               <CustomTextInput
                 keyboardType={"email-address"}
+                placeholder={"Адреса електронної пошти"}
                 onChangeText={(text) => {
                   setEmail(text);
                 }}
-                placeholder={"Адреса електронної пошти"}
                 isActive={activeInputName === "email"}
                 value={email}
                 onBlur={() => {
