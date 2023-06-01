@@ -2,9 +2,10 @@ import { StatusBar } from "expo-status-bar";
 import { StyleSheet, ImageBackground } from "react-native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import RootNavigator from "./src/navigation/RootNavigator";
-import { store } from "./src/store";
+import { persistor, store } from "./src/store";
 import { NavigationContainer, DefaultTheme } from "@react-navigation/native";
 import { Provider } from "react-redux";
+import { PersistGate } from "redux-persist/integration/react";
 
 const MyTheme = {
   ...DefaultTheme,
@@ -19,13 +20,15 @@ export default function App() {
     <SafeAreaProvider style={styles.wrapper}>
       <NavigationContainer theme={MyTheme}>
         <Provider store={store}>
-          <ImageBackground
-            style={styles.container}
-            source={require("./src/assets/bg.png")}
-            resizeMethod="resize"
-          >
-            <RootNavigator />
-          </ImageBackground>
+          <PersistGate loading={null} persistor={persistor}>
+            <ImageBackground
+              style={styles.container}
+              source={require("./src/assets/bg.png")}
+              resizeMethod="resize"
+            >
+              <RootNavigator />
+            </ImageBackground>
+          </PersistGate>
         </Provider>
       </NavigationContainer>
       <StatusBar style="auto" />
@@ -41,3 +44,4 @@ const styles = StyleSheet.create({
   },
   wrapper: { flex: 1 },
 });
+//

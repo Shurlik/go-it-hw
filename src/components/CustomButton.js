@@ -1,11 +1,18 @@
-import { StyleSheet } from "react-native";
+import { ActivityIndicator, StyleSheet } from "react-native";
 import React from "react";
 
 import Colors from "../assets/Colors";
 import CustomText from "./typography/CustomText";
 import PressButton from "./PressButton";
 
-const CustomButton = ({ title, onPress, secondary, style, disabled }) => {
+const CustomButton = ({
+  title,
+  onPress,
+  secondary,
+  style,
+  disabled,
+  loading,
+}) => {
   return (
     <PressButton
       style={[
@@ -16,9 +23,13 @@ const CustomButton = ({ title, onPress, secondary, style, disabled }) => {
       ]}
       {...{ onPress, disabled }}
     >
-      <CustomText style={[styles.title, secondary && styles.titleSecondary]}>
-        {title}
-      </CustomText>
+      {loading ? (
+        <ActivityIndicator size={"small"} color={Colors.textSecondary} />
+      ) : (
+        <CustomText style={[styles.title, secondary && styles.titleSecondary]}>
+          {title}
+        </CustomText>
+      )}
     </PressButton>
   );
 };

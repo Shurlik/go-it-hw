@@ -17,19 +17,79 @@ import CustomButton from "../components/CustomButton";
 import CustomText from "../components/typography/CustomText";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useNavigation } from "@react-navigation/native";
+import Error from "../components/Error";
+import { useFirebase } from "../hooks/useFirebase";
+import { setTokens, setUser } from "../store/user/user.slices";
+import { useDispatch } from "react-redux";
+import * as ImagePicker from "expo-image-picker";
 
 const RegistrationScreen = () => {
   const [activeInputName, setActiveInputName] = useState("");
   const [login, setLogin] = useState("");
-  const [email, setEmail] = useState("");
+  const [emailValue, setEmailValue] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const dispatch = useDispatch();
+  const [image, setImage] = useState(null);
+
+  const { firebaseSignUp, firebaseFileUpload } = useFirebase();
 
   const { bottom: bHeight } = useSafeAreaInsets();
   const navigation = useNavigation();
 
-  const registerHandler = () => {
-    navigation.navigate("tabs");
+  const getImageHandler = async () => {
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.All,
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
+    });
+
+    if (!result.canceled) {
+      setImage({
+        uri: result.assets[0].uri,
+        fileName: result.assets[0].fileName,
+      });
+    }
   };
+
+  const reset = () => {
+    setError("");
+    setLogin("");
+    setEmailValue("");
+    setPassword("");
+  };
+
+  const registerHandler = async () => {
+    setError(null);
+    if (password.length < 8) {
+      setError("Довжина пароля меньша 8 символів");
+      return;
+    }
+    try {
+      setLoading(true);
+      const photoLink = await firebaseFileUpload(image?.uri, image?.fileName);
+
+      const data = await firebaseSignUp({
+        email: emailValue,
+        password,
+        login,
+        photoURL: photoLink,
+      });
+      const { accessToken, refreshToken } = data.stsTokenManager;
+      const { displayName, email, photoURL, uid } = data;
+      dispatch(setTokens({ accessToken, refreshToken }));
+      dispatch(setUser({ displayName, email, photoURL, uid }));
+      reset();
+      navigation.navigate("tabs");
+    } catch (e) {
+      setError(e.message);
+      console.log("error: ", e.message);
+    }
+    setLoading(false);
+  };
+
   const loginHandler = () => {
     navigation.navigate("login");
   };
@@ -60,11 +120,16 @@ const RegistrationScreen = () => {
                 onFocus={() => {
                   setActiveInputName("login");
                 }}
+                editable={!loading}
+                value={login}
               />
               <CustomTextInput
                 keyboardType={"email-address"}
                 onChangeText={(text) => {
-                  setEmail(text);
+                  if (!!error) {
+                    setError(null);
+                  }
+                  setEmailValue(text);
                 }}
                 placeholder={"Адреса електронної пошти"}
                 isActive={activeInputName === "email"}
@@ -74,9 +139,14 @@ const RegistrationScreen = () => {
                 onFocus={() => {
                   setActiveInputName("email");
                 }}
+                editable={!loading}
+                value={emailValue}
               />
               <CustomTextInput
                 onChangeText={(text) => {
+                  if (!!error) {
+                    setError(null);
+                  }
                   setPassword(text);
                 }}
                 placeholder={"Пароль"}
@@ -88,18 +158,38 @@ const RegistrationScreen = () => {
                 onFocus={() => {
                   setActiveInputName("password");
                 }}
+                editable={!loading}
+                value={password}
               />
+              <Error isError={!!error} errorMessage={error} />
             </View>
             <View style={styles.buttons}>
               <CustomButton
                 title={"Зареєстуватися"}
                 onPress={registerHandler}
+                disabled={loading}
+                loading={loading}
               />
-              <CustomText secondary style={styles.login} onPress={loginHandler}>
+              <CustomText
+                secondary
+                style={styles.login}
+                onPress={loginHandler}
+                disabled={loading}
+              >
                 {"Вже є акаунт? Увійти"}
               </CustomText>
             </View>
-            <UserPhoto />
+            <UserPhoto
+              isPhoto={!!image}
+              image={image?.uri}
+              onPress={
+                image
+                  ? () => {
+                      setImage(null);
+                    }
+                  : getImageHandler
+              }
+            />
           </View>
         </ScrollView>
       </KeyboardAvoidingView>

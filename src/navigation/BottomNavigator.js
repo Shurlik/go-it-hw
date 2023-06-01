@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 
@@ -8,17 +8,25 @@ import ProfileScreen from "../screens/ProfileScreen";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { AntDesign, Feather, Ionicons } from "@expo/vector-icons";
 import Colors from "../assets/Colors";
-import { View, StyleSheet } from "react-native";
-import PressButton from "../components/PressButton";
-import { useNavigation } from "@react-navigation/native";
+import { View, StyleSheet, ActivityIndicator } from "react-native";
+import ExitButton from "../components/ExitButton";
+import { useFirebase } from "../hooks/useFirebase";
 
 const BottomNavigator = () => {
   const TabsNavigator = createBottomTabNavigator();
-  const navigation = useNavigation();
   const { top: tHeight } = useSafeAreaInsets();
-  const exitHandler = () => {
-    navigation.navigate("start", { screen: "login" });
+  const { firebaseFetchData } = useFirebase();
+  const [loading, setLoading] = useState(false);
+
+  const starter = async () => {
+    setLoading(true);
+    await firebaseFetchData();
+    setLoading(false);
   };
+
+  useEffect(() => {
+    starter();
+  }, []);
 
   const screenOptions = {
     tabBarHideOnKeyboard: true,
@@ -41,25 +49,21 @@ const BottomNavigator = () => {
     },
   };
 
+  if (loading) {
+    return <ActivityIndicator color={Colors.darkGrey} size={"large"} />;
+  }
+
   return (
     <TabsNavigator.Navigator screenOptions={() => screenOptions}>
       <TabsNavigator.Screen
         name={"posts"}
         component={PostsScreen}
         options={{
+          animationTypeForReplace: "pop",
           title: "Публікації",
           headerRight: () => {
             return (
-              <PressButton
-                style={[styles.exit, { paddingTop: tHeight }]}
-                onPress={exitHandler}
-              >
-                <Ionicons
-                  name="ios-exit-outline"
-                  size={32}
-                  color={Colors.darkGrey}
-                />
-              </PressButton>
+              <ExitButton style={{ paddingTop: tHeight, marginRight: 20 }} />
             );
           },
           tabBarIcon: ({ color, focused }) => (
@@ -90,6 +94,8 @@ const BottomNavigator = () => {
         name={"profile"}
         component={ProfileScreen}
         options={{
+          animationTypeForReplace: "push",
+          header: () => false,
           title: "Користувач",
           tabBarIcon: ({ color, focused }) => (
             <View
@@ -98,6 +104,7 @@ const BottomNavigator = () => {
               <Feather name="user" size={20} color={color} />
             </View>
           ),
+          unmountOnBlur: true,
         }}
       />
     </TabsNavigator.Navigator>

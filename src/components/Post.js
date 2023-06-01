@@ -10,10 +10,13 @@ const Post = ({
   postPlaceDescription,
   postCoordinates,
   imageUrl,
+  id,
+  likesCount,
+  commentsCount,
 }) => {
   const navigation = useNavigation();
   const commentsHandler = () => {
-    navigation.navigate("comments");
+    navigation.navigate("comments", { postId: id });
   };
   const locationHandler = () => {
     navigation.navigate("map", {
@@ -41,7 +44,7 @@ const Post = ({
             color={Colors.darkGrey}
             style={styles.rotate90}
           />
-          <CustomText style={styles.count}>0</CustomText>
+          <CustomText style={styles.count}>{commentsCount}</CustomText>
         </Pressable>
         <Pressable style={styles.row} onPress={locationHandler}>
           <Feather

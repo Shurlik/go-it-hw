@@ -1,21 +1,43 @@
 import React from "react";
-import { View, Text, StyleSheet } from "react-native";
+import { StyleSheet } from "react-native";
 import Colors from "../assets/Colors";
+import { useSelector } from "react-redux";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import Posts from "../components/Posts";
+import UserProfileData from "../components/UserProfileData";
 
 const ProfileScreen = () => {
+  const { user } = useSelector((state) => state.user);
+  const { posts } = useSelector((state) => state.posts);
+  const { top: tHeight } = useSafeAreaInsets();
+
+  const userPosts = posts.filter((post) => post?.owner?.uid === user?.uid);
+
   return (
-    <View style={styles.container}>
-      <Text>ProfileScreen Screen</Text>
-    </View>
+    <Posts
+      style={styles.content}
+      posts={userPosts}
+      containerStyle={[styles.list, { marginTop: 200 + tHeight, paddingBottom: 250 + tHeight  }]}
+      ListHeaderComponent={() => <UserProfileData {...{ user }} />}
+    />
   );
 };
 export default ProfileScreen;
 
 const styles = StyleSheet.create({
-  container: {
+  wrapper: {
     flex: 1,
-    justifyContent: "center",
+  },
+  content: {
+    flexGrow: 1,
     alignItems: "center",
+    backgroundColor: Colors.transparent,
+  },
+  list: {
     backgroundColor: Colors.white,
+    flexGrow: 1,
+    borderTopRightRadius: 25,
+    borderTopLeftRadius: 25,
+    paddingTop: 150,
   },
 });

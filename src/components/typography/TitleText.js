@@ -7,7 +7,7 @@ const TitleText = ({ text, titleType }) => {
     return (
         <Text
             style={[
-                styles.titel,
+                styles.title,
                 titleType === "h1" && styles.h1,
                 titleType === "h2" && styles.h2,
             ]}
@@ -20,7 +20,7 @@ const TitleText = ({ text, titleType }) => {
 export default TitleText;
 
 const styles = StyleSheet.create({
-    titel: {
+    title: {
         color: Colors.black,
         fontWeight: "bold",
     },

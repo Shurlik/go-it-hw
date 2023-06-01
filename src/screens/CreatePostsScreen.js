@@ -17,20 +17,22 @@ import * as MediaLibrary from "expo-media-library";
 import CustomButton from "../components/CustomButton";
 import * as Location from "expo-location";
 import { useNavigation } from "@react-navigation/native";
-import { useDispatch, useSelector } from "react-redux";
-import { setPosts } from "../store/posts/posts.slices";
+import { useSelector } from "react-redux";
+import { useFirebase } from "../hooks/useFirebase";
 
 const CreatePostsScreen = () => {
-  const dispatch = useDispatch();
-  const { posts } = useSelector((state) => state.posts);
+  const { user } = useSelector((state) => state.user);
   const [cameraRef, setCameraRef] = useState(null);
   const [permission, requestPermission] = Camera.useCameraPermissions();
   const [imageUrl, setImageUrl] = useState("");
 
   const [postTitle, setPostTitle] = useState("");
   const [postPlaceDescription, setPostPlaceDescription] = useState("");
-  const [postCoordinates, setPostCoordinates] = useState();
   const [activeInputName, setActiveInputName] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  const { firebaseUploadData, firebaseFileUpload, firebaseFetchData } =
+    useFirebase();
 
   const navigation = useNavigation();
 
@@ -38,7 +40,6 @@ const CreatePostsScreen = () => {
     setImageUrl("");
     setPostTitle("");
     setActiveInputName("");
-    setPostCoordinates(null);
     setPostPlaceDescription("");
   };
 
@@ -48,7 +49,6 @@ const CreatePostsScreen = () => {
       if (!mediaPermissions.granted) {
         await MediaLibrary.requestPermissionsAsync();
       }
-
       if (
         mediaPermissions.status === "denied" &&
         !mediaPermissions.canAskAgain
@@ -59,7 +59,6 @@ const CreatePostsScreen = () => {
         );
         return;
       }
-
       if (!permission.granted) {
         await requestPermission();
       }
@@ -88,6 +87,7 @@ const CreatePostsScreen = () => {
   };
 
   const getLocationHandler = async () => {
+    console.log("Getting location");
     const permissions = await Location.requestForegroundPermissionsAsync();
 
     if (permissions.status === "denied" && !permissions.canAskAgain) {
@@ -101,35 +101,43 @@ const CreatePostsScreen = () => {
     const location = await Location.getCurrentPositionAsync({});
     const longitude = JSON.stringify(location.coords.longitude);
     const latitude = JSON.stringify(location.coords.latitude);
-
-    setPostCoordinates({
-      longitude: parseFloat(longitude),
-      latitude: parseFloat(latitude),
-    });
+    console.log("location: ", { longitude, latitude });
+    console.log("Finished with location!");
+    return { longitude, latitude };
   };
 
   const submitHandler = async () => {
+    setLoading(true);
     try {
+      await firebaseFetchData();
       const asset = await MediaLibrary.createAssetAsync(imageUrl);
+      const photoLink = await firebaseFileUpload(asset?.uri, asset?.fileName);
 
-      await getLocationHandler();
-
+      const { longitude, latitude } = await getLocationHandler();
       const newPost = {
         postTitle,
         postPlaceDescription,
-        postCoordinates,
-        imageUrl,
-        uri: asset.uri,
+        postCoordinates: { longitude, latitude },
+        photoLink,
+        timestamp: new Date().getTime(),
+        owner: {
+          uid: user?.uid || "",
+          name: user?.displayName || "",
+          email: user?.email || "",
+          photoURL: user?.photoURL || "",
+        },
+        likes: [],
+        comments: [],
       };
-      const newPosts = [...posts];
-      newPosts.unshift(newPost);
-      dispatch(setPosts(newPosts));
+
+      await firebaseUploadData(newPost);
 
       reset();
       navigation.navigate("posts");
     } catch (e) {
       console.log("new post error: ", e);
     }
+    setLoading(false);
   };
 
   return (
@@ -175,6 +183,7 @@ const CreatePostsScreen = () => {
             onFocus={() => {
               setActiveInputName("postTitle");
             }}
+            editable={!loading}
           />
           <CustomTextInput
             placeholder={"Місцевість..."}
@@ -191,13 +200,15 @@ const CreatePostsScreen = () => {
             onFocus={() => {
               setActiveInputName("postLocation");
             }}
+            editable={!loading}
           />
         </View>
         <CustomButton
           title={"Опублікувати"}
           onPress={submitHandler}
           style={styles.button}
-          disabled={!imageUrl}
+          disabled={!imageUrl || loading}
+          loading={loading}
         />
       </KeyboardAvoidingView>
     </ScrollView>

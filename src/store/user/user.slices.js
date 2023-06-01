@@ -1,8 +1,8 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
-  user: null,
-  tokens: null,
+  user: null, //{displayName, email, photoUR, uidL}
+  tokens: null, //{accessToken, refreshToken}
 };
 
 const userSlice = createSlice({

@@ -1,4 +1,5 @@
 export default {
+    error: '#ff3000',
     white: "#fff",
     opacityWhite: "#ffffff33",
     black: "#000",

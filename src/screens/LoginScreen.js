@@ -14,22 +14,56 @@ import CustomTextInput from "../components/CustomTextInput";
 import CustomButton from "../components/CustomButton";
 import CustomText from "../components/typography/CustomText";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import {useNavigation} from "@react-navigation/native";
+import { useNavigation } from "@react-navigation/native";
+import Error from "../components/Error";
+import { useFirebase } from "../hooks/useFirebase";
+import { useDispatch } from "react-redux";
+import { setTokens, setUser } from "../store/user/user.slices";
 
 const LoginScreen = () => {
   const [activeInputName, setActiveInputName] = useState("");
-  const [email, setEmail] = useState("");
+  const [emailValue, setEmailValue] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const dispatch = useDispatch();
+
+  const { firebaseLogin } = useFirebase();
 
   const navigation = useNavigation();
 
   const { bottom: bHeight } = useSafeAreaInsets();
 
+  const reset = () => {
+    setError("");
+    setEmailValue("");
+    setPassword("");
+  };
+
   const registerHandler = () => {
+    setError(null);
     navigation.navigate("register");
   };
-  const loginHandler = () => {
-    navigation.navigate("tabs");
+
+  const loginHandler = async () => {
+    setError(null);
+    if (!emailValue || !password) {
+      setError("Поля не повинні бути пустими!");
+      return;
+    }
+    setLoading(true);
+    try {
+      const data = await firebaseLogin({ email: emailValue, password });
+      const { accessToken, refreshToken } = data.stsTokenManager;
+      const { displayName, email, photoURL, uid } = data;
+      dispatch(setTokens({ accessToken, refreshToken }));
+      dispatch(setUser({ displayName, email, photoURL, uid }));
+      reset();
+      navigation.navigate("tabs");
+    } catch (e) {
+      setError(e.message);
+    }
+    setLoading(false);
   };
 
   return (
@@ -47,19 +81,26 @@ const LoginScreen = () => {
                 keyboardType={"email-address"}
                 placeholder={"Адреса електронної пошти"}
                 onChangeText={(text) => {
-                  setEmail(text);
+                  if (!!error) {
+                    setError(null);
+                  }
+                  setEmailValue(text);
                 }}
                 isActive={activeInputName === "email"}
-                value={email}
+                value={emailValue}
                 onBlur={() => {
                   setActiveInputName("");
                 }}
                 onFocus={() => {
                   setActiveInputName("email");
                 }}
+                editable={!loading}
               />
               <CustomTextInput
                 onChangeText={(text) => {
+                  if (!!error) {
+                    setError(null);
+                  }
                   setPassword(text);
                 }}
                 value={password}
@@ -72,14 +113,22 @@ const LoginScreen = () => {
                 onFocus={() => {
                   setActiveInputName("password");
                 }}
+                editable={!loading}
               />
+              <Error isError={!!error} errorMessage={error} />
             </View>
             <View style={styles.buttons}>
-              <CustomButton title={"Увійти"} onPress={loginHandler} />
+              <CustomButton
+                title={"Увійти"}
+                onPress={loginHandler}
+                loading={loading}
+                disabled={loading}
+              />
               <CustomText
                 secondary
                 style={styles.login}
                 onPress={registerHandler}
+                disabled={loading}
               >
                 {"Немає акаунту? Зареєструватися"}
               </CustomText>
