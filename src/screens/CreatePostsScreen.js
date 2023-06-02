@@ -19,6 +19,8 @@ import * as Location from "expo-location";
 import { useNavigation } from "@react-navigation/native";
 import { useSelector } from "react-redux";
 import { useFirebase } from "../hooks/useFirebase";
+import TrashButton from "../components/TrashButton";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 const CreatePostsScreen = () => {
   const { user } = useSelector((state) => state.user);
@@ -140,6 +142,12 @@ const CreatePostsScreen = () => {
     setLoading(false);
   };
 
+  const clearScreenHandler = () => {
+    setPostTitle("");
+    setImageUrl("");
+    setPostPlaceDescription("");
+  };
+
   return (
     <ScrollView
       style={styles.flex}
@@ -211,6 +219,11 @@ const CreatePostsScreen = () => {
           loading={loading}
         />
       </KeyboardAvoidingView>
+      <TrashButton
+        onPress={clearScreenHandler}
+        active={!!postTitle || !!imageUrl || postPlaceDescription}
+      />
+      <SafeAreaView edges={["top"]} />
     </ScrollView>
   );
 };
@@ -257,6 +270,7 @@ const styles = StyleSheet.create({
   },
   wrapper: {
     width: "100%",
+    flexGrow: 1,
   },
   flex: { flex: 1 },
 });

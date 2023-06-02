@@ -26,7 +26,13 @@ const CustomButton = ({
       {loading ? (
         <ActivityIndicator size={"small"} color={Colors.textSecondary} />
       ) : (
-        <CustomText style={[styles.title, secondary && styles.titleSecondary]}>
+        <CustomText
+          style={[
+            styles.title,
+            secondary && styles.titleSecondary,
+            disabled && styles.textDisables,
+          ]}
+        >
           {title}
         </CustomText>
       )}
@@ -55,7 +61,9 @@ const styles = StyleSheet.create({
     color: Colors.textSecondary,
   },
   disabled: {
-    backgroundColor: Colors.darkGrey,
-    color: Colors.grey,
+    backgroundColor: Colors.grey,
+  },
+  textDisables: {
+    color: Colors.darkGrey,
   },
 });

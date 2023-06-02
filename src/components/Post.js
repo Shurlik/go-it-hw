@@ -41,7 +41,7 @@ const Post = ({
           <Feather
             name="message-circle"
             size={24}
-            color={Colors.darkGrey}
+            color={commentsCount ? Colors.orange :Colors.darkGrey}
             style={styles.rotate90}
           />
           <CustomText style={styles.count}>{commentsCount}</CustomText>

@@ -11,6 +11,7 @@ import Colors from "../assets/Colors";
 import { View, StyleSheet, ActivityIndicator } from "react-native";
 import ExitButton from "../components/ExitButton";
 import { useFirebase } from "../hooks/useFirebase";
+import BackButton from "../components/BackButton";
 
 const BottomNavigator = () => {
   const TabsNavigator = createBottomTabNavigator();
@@ -88,6 +89,8 @@ const BottomNavigator = () => {
             </View>
           ),
           unmountOnBlur: true,
+          tabBarStyle: { display: "none" },
+          headerLeft: () => <BackButton style={{paddingTop: tHeight}} />,
         }}
       />
       <TabsNavigator.Screen

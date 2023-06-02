@@ -4,7 +4,7 @@ import { Feather } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import Colors from "../assets/Colors";
 
-const BackButton = ({ style }) => {
+const BackButton = ({ style, onPress }) => {
   const navigation = useNavigation();
   const BackHandler = () => {
     const canBack = navigation.canGoBack();
@@ -21,7 +21,7 @@ const BackButton = ({ style }) => {
       size={24}
       color={Colors.black}
       style={[styles.back, style && style]}
-      onPress={BackHandler}
+      onPress={onPress ? onPress : BackHandler}
     />
   );
 };
