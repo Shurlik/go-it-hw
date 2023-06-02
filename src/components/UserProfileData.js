@@ -7,7 +7,7 @@ import ExitButton from "./ExitButton";
 const UserProfileData = ({ user }) => {
   return (
     <>
-      <View style={styles.container}>
+      <View style={styles.container} removeClippedSubviews={false}>
         <UserPhoto
           isPhoto={true}
           image={user?.photoURL}
@@ -25,9 +25,10 @@ export default UserProfileData;
 const styles = StyleSheet.create({
   container: {
     alignItems: "center",
-    top: -210,
+    top: -60,
     position: "absolute",
     alignSelf: "center",
+    zIndex: 9999
   },
   photo: {
     position: "relative",
@@ -36,7 +37,7 @@ const styles = StyleSheet.create({
   },
   exit: {
     position: "absolute",
-    right: 0,
-    top: -125
+    right: 16,
+    top: 20,
   },
 });

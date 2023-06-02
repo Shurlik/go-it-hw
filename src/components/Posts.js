@@ -1,8 +1,9 @@
 import React, { useRef } from "react";
-import { View, StyleSheet, FlatList } from "react-native";
+import { View, StyleSheet, ScrollView } from "react-native";
 import Post from "./Post";
 import Colors from "../assets/Colors";
 import { useScrollToTop } from "@react-navigation/native";
+import { FlatList } from "react-native-gesture-handler";
 
 const renderItem = ({ item }) => {
   return (
@@ -23,20 +24,31 @@ const Posts = ({ posts, ListHeaderComponent, style, containerStyle }) => {
   useScrollToTop(scrollRef);
 
   return (
-    <View style={[styles.container, style && style]}>
-      <FlatList
-        bounces={false}
-        ref={scrollRef}
-        ListHeaderComponent={ListHeaderComponent}
+    <View
+      style={[styles.container, style && style]}
+      removeClippedSubviews={false}
+    >
+      <ScrollView
         style={styles.scroll}
-        data={posts}
-        renderItem={renderItem}
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={[
-          styles.content,
-          containerStyle && containerStyle,
-        ]}
-      />
+        bounces={false}
+      >
+        <View style={[styles.content, containerStyle && containerStyle]}>
+          <ListHeaderComponent />
+          {posts.map((item, index) => (
+            <Post
+              key={index.toString()}
+              postCoordinates={item.postCoordinates}
+              postTitle={item.postTitle}
+              imageUrl={item.photoLink}
+              postPlaceDescription={item.postPlaceDescription}
+              id={item.id}
+              likesCount={item.likes?.length}
+              commentsCount={item.comments?.length}
+            />
+          ))}
+        </View>
+      </ScrollView>
     </View>
   );
 };
@@ -50,9 +62,11 @@ const styles = StyleSheet.create({
   },
   scroll: {
     width: "100%",
+    flex: 1,
   },
   content: {
     paddingHorizontal: 16,
-    flexGrow: 1
+    flexGrow: 1,
+    backgroundColor: Colors.white,
   },
 });

@@ -30,14 +30,13 @@ const styles = StyleSheet.create({
   },
   content: {
     flexGrow: 1,
-    alignItems: "center",
     backgroundColor: Colors.transparent,
   },
   list: {
-    backgroundColor: Colors.white,
     flexGrow: 1,
     borderTopRightRadius: 25,
     borderTopLeftRadius: 25,
+    marginTop: 110,
     paddingTop: 150,
   },
 });
