@@ -51,7 +51,11 @@ const BottomNavigator = () => {
   };
 
   if (loading) {
-    return <ActivityIndicator color={Colors.darkGrey} size={"large"} />;
+    return (
+      <View style={styles.container}>
+        <ActivityIndicator color={Colors.darkGrey} size={"large"} />
+      </View>
+    );
   }
 
   return (
@@ -90,7 +94,7 @@ const BottomNavigator = () => {
           ),
           unmountOnBlur: true,
           tabBarStyle: { display: "none" },
-          headerLeft: () => <BackButton style={{paddingTop: tHeight}} />,
+          headerLeft: () => <BackButton style={{ paddingTop: tHeight }} />,
         }}
       />
       <TabsNavigator.Screen
@@ -130,5 +134,11 @@ const styles = StyleSheet.create({
   },
   exit: {
     marginRight: 20,
+  },
+  container: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: Colors.white,
   },
 });
