@@ -17,16 +17,20 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useNavigation } from "@react-navigation/native";
 import Error from "../components/Error";
 import { useFirebase } from "../hooks/useFirebase";
-import { useDispatch } from "react-redux";
-import { setTokens, setUser } from "../store/user/user.slices";
+// import { useDispatch } from "react-redux";
+// import { setTokens, setUser } from "../store/user/user.slices";
+import store from "../mobx";
+import {observer} from "mobx-react-lite";
 
-const LoginScreen = () => {
+const LoginScreen = observer(() => {
+  const { setTokens, setUser } = store.user;
+
   const [activeInputName, setActiveInputName] = useState("");
   const [emailValue, setEmailValue] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
-  const dispatch = useDispatch();
+  // const dispatch = useDispatch();
 
   const { firebaseLogin } = useFirebase();
 
@@ -46,6 +50,7 @@ const LoginScreen = () => {
   };
 
   const loginHandler = async () => {
+
     setError(null);
     if (!emailValue || !password) {
       setError("Поля не повинні бути пустими!");
@@ -56,8 +61,10 @@ const LoginScreen = () => {
       const data = await firebaseLogin({ email: emailValue, password });
       const { accessToken, refreshToken } = data.stsTokenManager;
       const { displayName, email, photoURL, uid } = data;
-      dispatch(setTokens({ accessToken, refreshToken }));
-      dispatch(setUser({ displayName, email, photoURL, uid }));
+      // dispatch(setTokens({ accessToken, refreshToken }));
+      // dispatch(setUser({ displayName, email, photoURL, uid }));
+      setTokens({ accessToken, refreshToken });
+      setUser({ displayName, email, photoURL, uid });
       reset();
       navigation.navigate("tabs");
     } catch (e) {
@@ -139,7 +146,7 @@ const LoginScreen = () => {
       <View style={[styles.bottom, { paddingBottom: bHeight }]} />
     </>
   );
-};
+});
 
 export default LoginScreen;
 

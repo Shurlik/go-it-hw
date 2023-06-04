@@ -16,11 +16,12 @@ const MyTheme = {
 };
 
 export default function App() {
+
   return (
     <SafeAreaProvider style={styles.wrapper}>
       <NavigationContainer theme={MyTheme}>
-        <Provider store={store}>
-          <PersistGate loading={null} persistor={persistor}>
+        {/*<Provider store={store}>*/}
+        {/*  <PersistGate loading={null} persistor={persistor}>*/}
             <ImageBackground
               style={styles.container}
               source={require("./src/assets/bg.png")}
@@ -28,8 +29,8 @@ export default function App() {
             >
               <RootNavigator />
             </ImageBackground>
-          </PersistGate>
-        </Provider>
+          {/*</PersistGate>*/}
+        {/*</Provider>*/}
       </NavigationContainer>
       <StatusBar style="auto" />
     </SafeAreaProvider>

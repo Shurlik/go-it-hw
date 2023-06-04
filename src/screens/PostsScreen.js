@@ -2,9 +2,12 @@ import React, { useRef } from "react";
 import { View, Text, StyleSheet, FlatList } from "react-native";
 import Colors from "../assets/Colors";
 import Post from "../components/Post";
-import { useSelector } from "react-redux";
+// import { useSelector } from "react-redux";
 import User from "../components/User";
 import { useScrollToTop } from "@react-navigation/native";
+import store from "../mobx";
+import {observer} from "mobx-react-lite";
+
 
 const renderItem = ({ item }) => {
   return (
@@ -20,11 +23,12 @@ const renderItem = ({ item }) => {
   );
 };
 
-const PostsScreen = () => {
+const PostsScreen = observer(() => {
   const scrollRef = useRef(null);
   useScrollToTop(scrollRef);
 
-  const { posts } = useSelector((state) => state.posts);
+  const { posts } = store.posts;
+  // const { posts } = useSelector((state) => state.posts);
   return (
     <View style={styles.container}>
       <FlatList
@@ -38,7 +42,7 @@ const PostsScreen = () => {
       />
     </View>
   );
-};
+});
 export default PostsScreen;
 
 const styles = StyleSheet.create({

@@ -17,13 +17,17 @@ import * as MediaLibrary from "expo-media-library";
 import CustomButton from "../components/CustomButton";
 import * as Location from "expo-location";
 import { useNavigation } from "@react-navigation/native";
-import { useSelector } from "react-redux";
+// import { useSelector } from "react-redux";
 import { useFirebase } from "../hooks/useFirebase";
 import TrashButton from "../components/TrashButton";
 import { SafeAreaView } from "react-native-safe-area-context";
+import store from "../mobx";
+import {observer} from "mobx-react-lite";
 
-const CreatePostsScreen = () => {
-  const { user } = useSelector((state) => state.user);
+
+const CreatePostsScreen = observer(() => {
+  const { user } = store.user;
+  // const { user } = useSelector((state) => state.user);
   const [cameraRef, setCameraRef] = useState(null);
   const [permission, requestPermission] = Camera.useCameraPermissions();
   const [imageUrl, setImageUrl] = useState("");
@@ -226,7 +230,7 @@ const CreatePostsScreen = () => {
       <SafeAreaView edges={["top"]} />
     </ScrollView>
   );
-};
+});
 export default CreatePostsScreen;
 
 const styles = StyleSheet.create({

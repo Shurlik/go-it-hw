@@ -19,18 +19,22 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useNavigation } from "@react-navigation/native";
 import Error from "../components/Error";
 import { useFirebase } from "../hooks/useFirebase";
-import { setTokens, setUser } from "../store/user/user.slices";
-import { useDispatch } from "react-redux";
+// import { setTokens, setUser } from "../store/user/user.slices";
+// import { useDispatch } from "react-redux";
+import store from "../mobx";
 import * as ImagePicker from "expo-image-picker";
+import {observer} from "mobx-react-lite";
 
-const RegistrationScreen = () => {
+const RegistrationScreen = observer(() => {
+  const { setTokens, setUser } = store.user;
+
   const [activeInputName, setActiveInputName] = useState("");
   const [login, setLogin] = useState("");
   const [emailValue, setEmailValue] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
-  const dispatch = useDispatch();
+  // const dispatch = useDispatch();
   const [image, setImage] = useState(null);
 
   const { firebaseSignUp, firebaseFileUpload } = useFirebase();
@@ -79,8 +83,10 @@ const RegistrationScreen = () => {
       });
       const { accessToken, refreshToken } = data.stsTokenManager;
       const { displayName, email, photoURL, uid } = data;
-      dispatch(setTokens({ accessToken, refreshToken }));
-      dispatch(setUser({ displayName, email, photoURL, uid }));
+      // dispatch(setTokens({ accessToken, refreshToken }));
+      // dispatch(setUser({ displayName, email, photoURL, uid }));
+      setTokens({ accessToken, refreshToken });
+      setUser({ displayName, email, photoURL, uid });
       reset();
       navigation.navigate("tabs");
     } catch (e) {
@@ -195,7 +201,7 @@ const RegistrationScreen = () => {
       </KeyboardAvoidingView>
     </TouchableWithoutFeedback>
   );
-};
+});
 
 export default RegistrationScreen;
 

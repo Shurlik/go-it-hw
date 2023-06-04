@@ -11,14 +11,20 @@ import {
 import Colors from "../assets/Colors";
 import Comment from "../components/Comment";
 import CommentInput from "../components/CommentInput";
-import { useSelector } from "react-redux";
+// import { useSelector } from "react-redux";
 import CustomText from "../components/typography/CustomText";
 
-const CommentsScreen = ({ route }) => {
+import store from "../mobx";
+import {observer} from "mobx-react-lite";
+
+
+const CommentsScreen = observer(({ route }) => {
   const { postId } = route.params;
 
-  const { posts } = useSelector((state) => state.posts);
-  const { user } = useSelector((state) => state.user);
+  // const { posts } = useSelector((state) => state.posts);
+  // const { user } = useSelector((state) => state.user);
+  const { posts } = store.posts;
+  const { user } = store.user;
   const currentPost = posts.find((post) => post.id === postId);
 
   const renderItem = ({ item }) => (
@@ -60,7 +66,7 @@ const CommentsScreen = ({ route }) => {
       </KeyboardAvoidingView>
     </View>
   );
-};
+});
 export default CommentsScreen;
 
 const styles = StyleSheet.create({

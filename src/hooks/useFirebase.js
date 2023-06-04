@@ -27,10 +27,8 @@ import {
 } from "firebase/auth";
 import "react-native-get-random-values";
 import { v4 } from "uuid";
-import { useDispatch } from "react-redux";
-import { setPosts } from "../store/posts/posts.slices";
-
-console.log(process.env);
+// import { useDispatch } from "react-redux";
+// import { setPosts } from "../store/posts/posts.slices";
 
 // Your web app's Firebase configuration
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
@@ -47,11 +45,13 @@ const firebaseConfig = {
 };
 
 const app = initializeApp(firebaseConfig);
+import store from "../mobx";
+
 
 export function useFirebase() {
   const auth = getAuth(app);
   const storage = getStorage();
-  const dispatch = useDispatch();
+  // const dispatch = useDispatch();
 
   const firebaseSignUp = async ({
     email,
@@ -137,7 +137,8 @@ export function useFirebase() {
           ...doc.data(),
           id: doc.id,
         }));
-        dispatch(setPosts(newData));
+        // dispatch(setPosts(newData));
+        store.posts.setPosts(newData);
       });
     } catch (e) {
       console.log("firebaseFetchData error: ", e);

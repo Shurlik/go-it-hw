@@ -1,14 +1,19 @@
 import React from "react";
 import { StyleSheet } from "react-native";
 import Colors from "../assets/Colors";
-import { useSelector } from "react-redux";
+// import { useSelector } from "react-redux";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Posts from "../components/Posts";
 import UserProfileData from "../components/UserProfileData";
 
-const ProfileScreen = () => {
-  const { user } = useSelector((state) => state.user);
-  const { posts } = useSelector((state) => state.posts);
+import store from "../mobx";
+import { observer } from "mobx-react-lite";
+
+const ProfileScreen = observer(() => {
+  // const { user } = useSelector((state) => state.user);
+  // const { posts } = useSelector((state) => state.posts);
+  const { user } = store.user;
+  const { posts } = store.posts;
   const { top: tHeight } = useSafeAreaInsets();
 
   const userPosts = posts.filter((post) => post?.owner?.uid === user?.uid);
@@ -17,11 +22,14 @@ const ProfileScreen = () => {
     <Posts
       style={styles.content}
       posts={userPosts}
-      containerStyle={[styles.list, { marginTop: 200 + tHeight, paddingBottom: 250 + tHeight  }]}
+      containerStyle={[
+        styles.list,
+        { marginTop: 200 + tHeight, paddingBottom: 250 + tHeight },
+      ]}
       ListHeaderComponent={() => <UserProfileData {...{ user }} />}
     />
   );
-};
+});
 export default ProfileScreen;
 
 const styles = StyleSheet.create({

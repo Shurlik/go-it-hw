@@ -3,19 +3,25 @@ import { StyleSheet } from "react-native";
 import PressButton from "./PressButton";
 import { Ionicons } from "@expo/vector-icons";
 import Colors from "../assets/Colors";
-import { logout } from "../store/user/user.slices";
-import { useDispatch } from "react-redux";
+// import { useDispatch } from "react-redux";
 import { useFirebase } from "../hooks/useFirebase";
-import { clearPosts } from "../store/posts/posts.slices";
+// import { logout } from "../store/user/user.slices";
+// import { clearPosts } from "../store/posts/posts.slices";
+import store from "../mobx";
+import {observer} from "mobx-react-lite";
 
-const ExitButton = ({ style }) => {
-  const dispatch = useDispatch();
+const ExitButton = observer(({ style }) => {
+  // const dispatch = useDispatch();
+  const {logout} = store.user
+  const {clearPosts} = store.posts
   const { firebaseLogout } = useFirebase();
   const exitHandler = async () => {
     try {
       await firebaseLogout();
-      dispatch(logout());
-      dispatch(clearPosts());
+      // dispatch(logout());
+      // dispatch(clearPosts());
+      logout();
+      clearPosts();
     } catch (e) {
       console.log("exitHandler error: ", e);
     }
@@ -26,7 +32,7 @@ const ExitButton = ({ style }) => {
       <Ionicons name="ios-exit-outline" size={32} color={Colors.darkGrey} />
     </PressButton>
   );
-};
+});
 export default ExitButton;
 
 const styles = StyleSheet.create({

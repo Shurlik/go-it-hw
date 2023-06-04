@@ -2,10 +2,13 @@ import React from "react";
 import { View, StyleSheet, Image } from "react-native";
 import CustomText from "./typography/CustomText";
 import Colors from "../assets/Colors";
-import { useSelector } from "react-redux";
+// import { useSelector } from "react-redux";
+import store from "../mobx";
+import {observer} from "mobx-react-lite";
 
-const User = () => {
-  const { user } = useSelector((state) => state.user);
+const User = observer(() => {
+  const { user } = store.user;
+  // const { user } = useSelector((state) => state.user);
   return (
     <View style={styles.container}>
       <View style={styles.userPhoto}>
@@ -25,7 +28,7 @@ const User = () => {
       </View>
     </View>
   );
-};
+});
 export default User;
 
 const styles = StyleSheet.create({

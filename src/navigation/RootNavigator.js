@@ -1,4 +1,4 @@
-import React, {useEffect} from "react";
+import React from "react";
 
 import { createStackNavigator } from "@react-navigation/stack";
 import StartNavigator from "./StartNavigator";
@@ -6,9 +6,11 @@ import BottomNavigator from "./BottomNavigator";
 import CommentsScreen from "../screens/CommentsScreen";
 import BackButton from "../components/BackButton";
 import MapScreen from "../screens/MapScreen";
-import { useSelector } from "react-redux";
+// import { useSelector } from "react-redux";
+import store from "../mobx";
+import {observer} from "mobx-react-lite";
 
-const RootNavigator = () => {
+const RootNavigator = observer(() => {
   const RootStackNavigator = createStackNavigator();
   const headerStyle = {
     elevation: 1,
@@ -16,10 +18,10 @@ const RootNavigator = () => {
     borderBottomWidth: 1,
   };
 
-  const { tokens } = useSelector((state) => {
-    return state.user;
-  });
-
+  // const { tokens } = useSelector((state) => {
+  //   return state.user;
+  // });
+  const { tokens } = store.user;
 
   return (
     <RootStackNavigator.Navigator
@@ -35,9 +37,8 @@ const RootNavigator = () => {
             options={{
               header: () => false,
               gestureEnabled: false,
-              gestureDirection: 'vertical',
+              gestureDirection: "vertical",
               animationTypeForReplace: "push",
-
             }}
           />
           <RootStackNavigator.Screen
@@ -72,5 +73,5 @@ const RootNavigator = () => {
       )}
     </RootStackNavigator.Navigator>
   );
-};
+});
 export default RootNavigator;
