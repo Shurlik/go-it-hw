@@ -80,7 +80,7 @@ const CreatePostsScreen = () => {
     }
   };
 
-  const getNewPhotoHandler = async () => {
+  const resetPhotoHandler = async () => {
     try {
       setImageUrl("");
     } catch (e) {
@@ -161,7 +161,7 @@ const CreatePostsScreen = () => {
         <View style={styles.photo}>
           {imageUrl ? (
             <ImageBackground source={{ uri: imageUrl }} style={styles.camera}>
-              <PhotoIcon onPress={getNewPhotoHandler} secondary />
+              <PhotoIcon onPress={resetPhotoHandler} secondary />
             </ImageBackground>
           ) : (
             <Camera

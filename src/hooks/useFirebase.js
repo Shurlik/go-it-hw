@@ -1,6 +1,6 @@
-import React from 'react';
+import React from "react";
 // Для роботи із firebase обовʼязково треба ініціалізувати проект
-import { initializeApp } from "firebase/app";
+import { initializeApp, getApps, getApp } from "firebase/app";
 // Функція для підключення авторизації в проект
 import { getAuth } from "firebase/auth";
 // Функція для підключення бази даних у проект
@@ -15,22 +15,26 @@ import {
 import {
   getStorage,
   ref as storageRef,
-  uploadBytes,
+  uploadBytesResumable,
   getDownloadURL,
 } from "firebase/storage";
 
 import {
+  getReactNativePersistence,
+  initializeAuth,
+} from "firebase/auth/react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+
+import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
-  onAuthStateChanged,
   updateProfile,
 } from "firebase/auth";
 import "react-native-get-random-values";
 import { v4 } from "uuid";
 import { useDispatch } from "react-redux";
 import { setPosts } from "../store/posts/posts.slices";
-
-console.log(process.env);
+import { logout } from "../store/user/user.slices";
 
 // Your web app's Firebase configuration
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
@@ -46,12 +50,38 @@ const firebaseConfig = {
   measurementId: "",
 };
 
-const app = initializeApp(firebaseConfig);
+// const app = initializeApp(firebaseConfig);
+let app;
+let auth;
+
+if (!getApps().length) {
+  try {
+    app = initializeApp(firebaseConfig);
+    auth = initializeAuth(app, {
+      persistence: getReactNativePersistence(AsyncStorage),
+    });
+  } catch (error) {
+    console.log("Error initializing app: " + error);
+  }
+} else {
+  app = getApp();
+  auth = getAuth(app);
+}
 
 export function useFirebase() {
-  const auth = getAuth(app);
   const storage = getStorage();
   const dispatch = useDispatch();
+
+  const firebaseUpdateUserPhoto = async (photoURL) => {
+    try {
+      await updateProfile(auth.currentUser, {
+        photoURL,
+      });
+      return auth.currentUser;
+    } catch (e) {
+      console.log("firebaseUpdateUserPhoto error: ", e);
+    }
+  };
 
   const firebaseSignUp = async ({
     email,
@@ -107,10 +137,9 @@ export function useFirebase() {
     try {
       const res = await fetch(imageUri);
       const blob = await res.blob();
-
       const imageRef = storageRef(storage, `${v4()}-${imageName}`); // getting image ref
       // 'file' comes from the Blob or File API
-      const response = await uploadBytes(imageRef, blob);
+      const response = await uploadBytesResumable(imageRef, blob); //uploadBytes() crashed app
       return await getDownloadURL(response.ref); // getting link
     } catch (e) {
       console.log("firebaseFileUpload error: ", e);
@@ -148,7 +177,6 @@ export function useFirebase() {
     const db = getFirestore(app);
 
     try {
-      // await db.collection('posts').doc(postId).update(data);
       await updateDoc(doc(db, "posts", postId), data);
       await firebaseFetchData();
     } catch (e) {
@@ -164,5 +192,6 @@ export function useFirebase() {
     firebaseUploadData,
     firebaseFetchData,
     firebaseUpdateData,
+    firebaseUpdateUserPhoto,
   };
 }

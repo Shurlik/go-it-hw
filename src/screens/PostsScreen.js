@@ -14,7 +14,7 @@ const renderItem = ({ item }) => {
       imageUrl={item.photoLink}
       postPlaceDescription={item.postPlaceDescription}
       id={item.id}
-      likesCount={item.likes?.length}
+      likes={item.likes}
       commentsCount={item.comments?.length}
     />
   );
@@ -25,6 +25,7 @@ const PostsScreen = () => {
   useScrollToTop(scrollRef);
 
   const { posts } = useSelector((state) => state.posts);
+
   return (
     <View style={styles.container}>
       <FlatList
