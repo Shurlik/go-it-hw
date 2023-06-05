@@ -1,5 +1,5 @@
 import React from "react";
-import { View, Text, StyleSheet } from "react-native";
+import { View, StyleSheet } from "react-native";
 import Colors from "../assets/Colors";
 import MapView, { Marker } from "react-native-maps";
 
@@ -17,7 +17,10 @@ const MapScreen = ({ route }) => {
         }}
       >
         <Marker
-          coordinate={postCoordinates}
+          coordinate={{
+            longitude: postCoordinates.longitude,
+            latitude: postCoordinates.latitude,
+          }}
           title={postTitle}
           description={postPlaceDescription}
         />
