@@ -22,8 +22,7 @@ import { useFirebase } from "../hooks/useFirebase";
 import TrashButton from "../components/TrashButton";
 import { SafeAreaView } from "react-native-safe-area-context";
 import store from "../mobx";
-import {observer} from "mobx-react-lite";
-
+import { observer } from "mobx-react-lite";
 
 const CreatePostsScreen = observer(() => {
   const { user } = store.user;
@@ -105,8 +104,8 @@ const CreatePostsScreen = observer(() => {
     }
 
     const location = await Location.getCurrentPositionAsync({});
-    const longitude = JSON.stringify(location.coords.longitude);
-    const latitude = JSON.stringify(location.coords.latitude);
+    const longitude = parseFloat(JSON.stringify(location.coords.longitude));
+    const latitude = parseFloat(JSON.stringify(location.coords.latitude));
     console.log("location: ", { longitude, latitude });
     console.log("Finished with location!");
     return { longitude, latitude };
