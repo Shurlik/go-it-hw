@@ -3,21 +3,6 @@ import { View, StyleSheet, ScrollView } from "react-native";
 import Post from "./Post";
 import Colors from "../assets/Colors";
 import { useScrollToTop } from "@react-navigation/native";
-import { FlatList } from "react-native-gesture-handler";
-
-const renderItem = ({ item }) => {
-  return (
-    <Post
-      postCoordinates={item.postCoordinates}
-      postTitle={item.postTitle}
-      imageUrl={item.photoLink}
-      postPlaceDescription={item.postPlaceDescription}
-      id={item.id}
-      likesCount={item.likes?.length}
-      commentsCount={item.comments?.length}
-    />
-  );
-};
 
 const Posts = ({ posts, ListHeaderComponent, style, containerStyle }) => {
   const scrollRef = useRef(null);
@@ -43,7 +28,7 @@ const Posts = ({ posts, ListHeaderComponent, style, containerStyle }) => {
               imageUrl={item.photoLink}
               postPlaceDescription={item.postPlaceDescription}
               id={item.id}
-              likesCount={item.likes?.length}
+              likes={item.likes}
               commentsCount={item.comments?.length}
             />
           ))}
