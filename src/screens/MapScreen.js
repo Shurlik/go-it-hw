@@ -6,8 +6,6 @@ import MapView, { Marker } from "react-native-maps";
 const MapScreen = ({ route }) => {
   const { postCoordinates, postTitle, postPlaceDescription } = route.params;
 
-  console.log(postCoordinates, postTitle, postPlaceDescription);
-
   return (
     <View style={styles.container}>
       <MapView
@@ -20,8 +18,8 @@ const MapScreen = ({ route }) => {
       >
         <Marker
           coordinate={{
-            latitude: postCoordinates.latitude,
             longitude: postCoordinates.longitude,
+            latitude: postCoordinates.latitude,
           }}
           title={postTitle}
           description={postPlaceDescription}

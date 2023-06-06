@@ -1,9 +1,12 @@
 import React from "react";
-import { View, StyleSheet, Image, Pressable } from "react-native";
+import { View, StyleSheet, Image } from "react-native";
 import CustomText from "./typography/CustomText";
-import { Feather } from "@expo/vector-icons";
 import Colors from "../assets/Colors";
 import { useNavigation } from "@react-navigation/native";
+import PostIcons from "./PostIcons";
+// import { useSelector } from "react-redux";
+import { useFirebase } from "../hooks/useFirebase";
+import store from "../mobx";
 
 const Post = ({
   postTitle,
@@ -11,19 +14,35 @@ const Post = ({
   postCoordinates,
   imageUrl,
   id,
-  likesCount,
+  likes,
   commentsCount,
 }) => {
   const navigation = useNavigation();
+  // const { user } = useSelector((state) => state.user);
+  const { user } = store.user;
+  const { firebaseUpdateData } = useFirebase();
+
   const commentsHandler = () => {
     navigation.navigate("comments", { postId: id });
   };
+
   const locationHandler = () => {
     navigation.navigate("map", {
       postCoordinates,
       postTitle,
       postPlaceDescription,
     });
+  };
+
+  const likesHandler = async () => {
+    const itemIndex = likes.indexOf(user.uid);
+    let newArray = [...likes];
+    if (itemIndex !== -1) {
+      newArray.splice(itemIndex, 1);
+    } else {
+      newArray.push(user.uid);
+    }
+    await firebaseUpdateData(id, { likes: newArray });
   };
 
   return (
@@ -37,26 +56,15 @@ const Post = ({
       </View>
       <CustomText style={styles.title}>{postTitle || ""}</CustomText>
       <View style={styles.bottom}>
-        <Pressable style={styles.row} onPress={commentsHandler}>
-          <Feather
-            name="message-circle"
-            size={24}
-            color={commentsCount ? Colors.orange :Colors.darkGrey}
-            style={styles.rotate90}
-          />
-          <CustomText style={styles.count}>{commentsCount}</CustomText>
-        </Pressable>
-        <Pressable style={styles.row} onPress={locationHandler}>
-          <Feather
-            name="map-pin"
-            size={18}
-            color={Colors.darkGrey}
-            style={styles.point}
-          />
-          <CustomText style={styles.description}>
-            {postPlaceDescription}
-          </CustomText>
-        </Pressable>
+        <PostIcons onPress={commentsHandler} count={commentsCount} />
+        <PostIcons
+          onPress={likesHandler}
+          count={likes?.length}
+          type={"likes"}
+          style={styles.likes}
+        />
+        <View style={styles.divider} />
+        <PostIcons onPress={locationHandler} location={postPlaceDescription} />
       </View>
     </View>
   );
@@ -97,24 +105,15 @@ const styles = StyleSheet.create({
     width: "100%",
     height: "100%",
   },
-  row: {
-    flexDirection: "row",
-    alignItems: "center",
+  divider: {
+    flexGrow: 1,
   },
-  description: {
-    color: Colors.black,
-    marginLeft: 8,
-    textDecorationLine: "underline",
-    textDecorationColor: Colors.black,
-  },
-
-  rotate90: {
-    transform: [{ scaleX: -1 }],
-  },
-  count: { marginLeft: 8, color: Colors.darkGrey },
   title: {
     paddingLeft: 8,
     fontWeight: "bold",
     marginTop: 8,
+  },
+  likes: {
+    marginLeft: 25,
   },
 });

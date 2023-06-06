@@ -4,7 +4,7 @@ import UserPhoto from "./UserPhoto";
 import TitleText from "./typography/TitleText";
 import ExitButton from "./ExitButton";
 
-const UserProfileData = ({ user }) => {
+const UserProfileData = ({ user, onPress }) => {
   return (
     <>
       <View style={styles.container} removeClippedSubviews={false}>
@@ -13,10 +13,11 @@ const UserProfileData = ({ user }) => {
           image={user?.photoURL}
           profile
           style={styles.photo}
+          onPress={onPress}
         />
         <TitleText text={user?.displayName} titleType={"h1"} />
       </View>
-      <ExitButton style={styles.exit} />
+      <ExitButton style={styles.exit}  />
     </>
   );
 };

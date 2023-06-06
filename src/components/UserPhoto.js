@@ -15,7 +15,7 @@ const UserPhoto = ({ isPhoto, image, onPress, profile, style }) => {
           resizeMode={"cover"}
         />
       </View>
-      {!profile && (
+      {!!onPress && (
         <EvilIcons
           name={isPhoto ? "close-o" : "plus"}
           size={36}

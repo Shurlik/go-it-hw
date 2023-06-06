@@ -24,7 +24,7 @@ import { useFirebase } from "../hooks/useFirebase";
 import store from "../mobx";
 import * as ImagePicker from "expo-image-picker";
 import {observer} from "mobx-react-lite";
-
+import { useImage } from "../hooks/useImage";
 const RegistrationScreen = observer(() => {
   const { setTokens, setUser } = store.user;
 
@@ -38,23 +38,15 @@ const RegistrationScreen = observer(() => {
   const [image, setImage] = useState(null);
 
   const { firebaseSignUp, firebaseFileUpload } = useFirebase();
+  const { getImage } = useImage();
 
   const { bottom: bHeight } = useSafeAreaInsets();
   const navigation = useNavigation();
 
   const getImageHandler = async () => {
-    let result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.All,
-      allowsEditing: true,
-      aspect: [4, 3],
-      quality: 1,
-    });
-
-    if (!result.canceled) {
-      setImage({
-        uri: result.assets[0].uri,
-        fileName: result.assets[0].fileName,
-      });
+    const imageObject = await getImage();
+    if (imageObject) {
+      setImage(imageObject);
     }
   };
 

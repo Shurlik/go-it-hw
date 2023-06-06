@@ -43,7 +43,7 @@ const Posts = ({ posts, ListHeaderComponent, style, containerStyle }) => {
               imageUrl={item.photoLink}
               postPlaceDescription={item.postPlaceDescription}
               id={item.id}
-              likesCount={item.likes?.length}
+              likes={item.likes}
               commentsCount={item.comments?.length}
             />
           ))}

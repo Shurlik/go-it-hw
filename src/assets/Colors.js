@@ -8,5 +8,6 @@ export default {
     darkGrey: "#c0c0c0",
     orange: "#ef7629",
     textSecondary: '#24436e',
-    transparent: 'transparent'
+    transparent: 'transparent',
+    backdrop: '#00000088'
 };
